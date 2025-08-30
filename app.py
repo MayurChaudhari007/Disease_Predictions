@@ -379,8 +379,8 @@ def allowed_file(filename: str) -> bool:
 # ---------------------------
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(25), unique=True, nullable=False)
-    password_hash = db.Column(db.String(150), nullable=False)
+    username = db.Column(db.String(350), unique=True, nullable=False)
+    password_hash = db.Column(db.String(350), nullable=False)
 
     # link to reports
     reports = db.relationship(
