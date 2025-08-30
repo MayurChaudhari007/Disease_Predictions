@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %} Report Storage {% endblock %}
+{% block content %}
+
+
+<div class="container py-4">
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="alert alert-info rounded-4">
+    {{ messages|join(' • ') }}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <div class="row g-4">
+    <!-- Upload Card -->
+    <div class="col-12 col-lg-4">
+      <div class="card shadow-sm rounded-4 h-100">
+        <div class="card-body">
+          <h5 class="card-title fw-bold">Upload Medical Report</h5>
+          <p class="text-muted small mb-3">Accepted: PDF, JPG, PNG, DOC, DOCX (max 16 MB)</p>
+
+          <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+              <input class="form-control rounded-pill" type="file" name="report"
+                accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" required>
+            </div>
+            <button class="btn btn-primary w-100 rounded-pill" type="submit">Upload</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports List -->
+    <div class="col-12 col-lg-8">
+      <div class="card shadow-sm rounded-4 h-100">
+        <div class="card-body">
+          <h5 class="card-title fw-bold mb-3">Your Reports</h5>
+
+          {% if reports %}
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th>File</th>
+                  <th class="text-nowrap">Uploaded</th>
+                  <th>Size</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for r in reports %}
+                <tr>
+                  <td class="text-truncate" style="max-width: 260px;">
+                    {{ r.original_name }}
+                  </td>
+                  <td class="text-nowrap">
+                    {{ r.uploaded_at.strftime('%d %b %Y, %I:%M %p') }}
+                  </td>
+                  <td>{{ r.size|filesize }}</td>
+                  <td class="text-end">
+                    <a class="btn btn-sm btn-outline-primary rounded-pill"
+                      href="{{ url_for('download', report_id=r.id) }}">
+                      Download
+                    </a>
+                    <form action="{{ url_for('delete_file', report_id=r.id) }}" method="post" class="d-inline"
+                      onsubmit="return confirm('Delete this report?');">
+                      <button class="btn btn-sm btn-outline-danger rounded-pill" type="submit">
+                        Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center text-muted py-4">
+            No reports yet. Upload your first medical report!
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
