@@ -354,7 +354,9 @@ app.secret_key = "your_secret_key"
 # ---------------------------
 # SQLAlchemy Config
 # ---------------------------
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
@@ -403,7 +405,8 @@ class MedicalReport(db.Model):
     size = db.Column(db.Integer)
     uploaded_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-
+with app.app_context():
+        db.create_all()
 # ---------------------------
 # Jinja Filters
 # ---------------------------
@@ -729,6 +732,5 @@ def contact():
 
 ##########################################################################################
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
+    
     app.run(debug=True)
