@@ -1,5 +1,5 @@
 body {
-  background: linear-gradient(135deg, #e6f7ff, #f5fcff);
+  background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
   font-family: "Segoe UI", sans-serif;
   position: relative;
   min-height: 100vh;
@@ -8,7 +8,7 @@ body {
 }
 
 .navbar {
-  position: fixed;
+  /* position: fixed; */
   top: 0;
   left: 0;
   width: 100%;

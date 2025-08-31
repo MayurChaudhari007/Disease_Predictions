@@ -5,143 +5,25 @@
 <style>
   /* Background Gradient */
   body {
-    background: linear-gradient(120deg, #60a7b1, #ffffff);
+    background-image: linear-gradient(to right, #eea2a2 0%, #bbc1bf 19%, #57c6e1 42%, #b49fda 79%, #7ac5d8 100%);
     overflow: hidden;
     position: relative;
     font-family: 'Poppins', sans-serif;
   }
 
   /* Floating Medical Icons */
-  body::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("https://cdn-icons-png.flaticon.com/512/2966/2966486.png"),
-      url("https://cdn-icons-png.flaticon.com/512/2966/2966508.png"),
-      url("https://cdn-icons-png.flaticon.com/512/2966/2966505.png");
-    background-repeat: no-repeat;
-    background-position: 15% 20%, 80% 40%, 50% 75%;
-    background-size: 80px, 100px, 90px;
-    opacity: 0.08;
-    animation: float 12s infinite linear;
-    z-index: -1;
-  }
+  
 
   /* Floating Bubbles */
-  .bubble {
-    position: absolute;
-    bottom: -100px;
-    background: rgba(3, 54, 71, 0.2);
-    border-radius: 50%;
-    animation: rise 20s infinite ease-in;
-    z-index: -1;
-  }
+  
 
-  .bubble:nth-child(1) {
-    left: 10%;
-    width: 80px;
-    height: 80px;
-    animation-duration: 5s;
-  }
-
-  .bubble:nth-child(2) {
-    left: 20%;
-    width: 60px;
-    height: 60px;
-    animation-duration: 8s;
-  }
-
-  .bubble:nth-child(3) {
-    left: 10%;
-    width: 100px;
-    height: 100px;
-    animation-duration: 10s;
-  }
-
-  .bubble:nth-child(4) {
-    left: 60%;
-    width: 80px;
-    height: 80px;
-    animation-duration: 6s;
-  }
-
-  .bubble:nth-child(5) {
-    left: 70%;
-    width: 60px;
-    height: 60px;
-    animation-duration: 20s;
-  }
-
-  .bubble:nth-child(6) {
-    left: 80%;
-    width: 100px;
-    height: 100px;
-    animation-duration: 25s;
-  }
-
-  .bubble:nth-child(7) {
-    left: 90%;
-    width: 80px;
-    height: 80px;
-    animation-duration: 6s;
-  }
-
-  .bubble:nth-child(8) {
-    left: 10%;
-    width: 60px;
-    height: 60px;
-    animation-duration: 4s;
-  }
-
-  .bubble:nth-child(9) {
-    left: 50%;
-    width: 100px;
-    height: 100px;
-    animation-duration: 9s;
-  }
-
-  @keyframes rise {
-    0% {
-      transform: translateY(0);
-      opacity: 0.5;
-    }
-
-    100% {
-      transform: translateY(-120vh);
-      opacity: 0;
-    }
-  }
-
-  @keyframes float {
-    0% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(-20px);
-    }
-
-    100% {
-      transform: translateY(0);
-    }
-  }
+ 
 
   /* Medical Motivation Text */
   
 </style>
 
-<div class="bubble"></div>
-<div class="bubble"></div>
-<div class="bubble"></div>
-<div class="bubble"></div>
-<div class="bubble"></div>
-<div class="bubble"></div>
-<div class="bubble"></div>
-<div class="bubble"></div>
-<div class="bubble"></div>
+
 
 <!-- Medical Tagline -->
 
