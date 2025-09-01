@@ -33,6 +33,19 @@
 - Doctor-like chatbot for medical consultations.
 - Uses **Google Gemini API** for intelligent responses.
 
+## 📝 Medical Report Storage
+
+The web app includes a **Medical Report Storage system** that allows users to save and manage their health reports securely.
+
+### 🔑 Key Features:
+- Stores **Medical Reports** into the database.
+- Users can **view their past medical reports** after logging in.
+- Option to **download or print reports** for offline use.
+- Reports are linked to the **authenticated user account**, ensuring privacy and security.
+
+This feature ensures users can **track their health history** and easily share reports with doctors when needed.
+
+
 ### 🔹 Contact & Feedback
 - Contact page includes:
   - Name, phone, email, social links (**GitHub**, **LinkedIn**, **X/Twitter**).
