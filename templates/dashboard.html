@@ -1,7 +1,35 @@
 {% extends 'base.html' %}
 {% block title %} Report Storage {% endblock %}
+{% block extra_css %} 
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/storage.css') }}">
+{%endblock %}
 {% block content %}
 
+<div class="storage-info">
+  <h2>📂 Smart Health Report Storage</h2>
+  <p class="subtitle">Manage, organize, and secure your health reports with ease.</p>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="icon">🔒</div>
+      <h3>Secure Storage</h3>
+      <p>Your reports are safely stored with encryption and privacy protection.</p>
+    </div>
+
+    <div class="info-card">
+      <div class="icon">⚡</div>
+      <h3>Quick Access</h3>
+      <p>Retrieve reports anytime, anywhere with instant search and filters.</p>
+    </div>
+
+    <div class="info-card">
+      <div class="icon">📊</div>
+      <h3>Smart Insights</h3>
+      <p>Keep track of report history and monitor your health trends easily.</p>
+    </div>
+  </div>
+</div>
 
 <div class="container py-4">
   {% with messages = get_flashed_messages() %}

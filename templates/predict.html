@@ -1,61 +1,98 @@
 {% extends "base.html"%} {% block title%} Predict {% endblock %} {% block
 extra_css %}
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-  integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
-  crossorigin="anonymous"
-/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
 <link rel="stylesheet" href="../static/css/predict.css" />
 {%endblock %} {% block content%}
 
+<!-- ===== Hero Section ===== -->
+  <div class="hero">
+    <h1>📊 Machine Learning Disease Prediction</h1>
+    <p>
+      Enter your symptoms and let our trained Machine Learning model predict
+      possible diseases. Get instant reports with medications, diet, and
+      precautions.
+    </p>
+  </div>
+
+  <!-- ===== Stats Section ===== -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <h2>⚡ 92%</h2>
+      <p>Model Accuracy (SVC)</p>
+    </div>
+    <div class="stat-card">
+      <h2>40+</h2>
+      <p>Diseases Covered</p>
+    </div>
+    <div class="stat-card">
+      <h2>🔍 Data-Driven</h2>
+      <p>Prediction by ML</p>
+    </div>
+  </div>
+
+  <!-- ===== How It Works ===== -->
+  <div class="steps">
+    <h2>How It Works</h2>
+    <div class="step-list">
+      <div class="step">
+        <span>1️⃣</span>
+        <p>Enter your symptoms in the form below</p>
+      </div>
+      <div class="step">
+        <span>2️⃣</span>
+        <p>Our ML model analyzes and predicts the disease</p>
+      </div>
+      <div class="step">
+        <span>3️⃣</span>
+        <p>Download your medical report instantly</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Health Tips ===== -->
+  <div class="tips">
+    <h2>💡 Health Tips</h2>
+    <ul>
+      <li>🥗 Eat a balanced diet rich in fruits and vegetables</li>
+      <li>💧 Stay hydrated by drinking at least 8 glasses of water</li>
+      <li>🏃 Exercise for 30 minutes daily</li>
+      <li>🛌 Get 7–8 hours of quality sleep</li>
+      <li>😌 Reduce stress through meditation or yoga</li>
+    </ul>
+  </div>
+
 <div class="container ">
-  <h2 class="text-primary mb-4 text-center">Disease Prediction</h2>
+  
+
   <form action="/predict" method="post">
     <div class="form-group shadow">
       <h2>🩺 Patient Details</h2>
-      <label class="new_label">Patient Name:</label>
-      <input
-        type="text"
-        name="patient_name"
-        placeholder="Enter full name"
-        required
-      /><br />
+      <label class="new_label" for="pName">Patient Name:</label>
+      <input type="text" name="patient_name" placeholder="Enter full name" id="pName" required /><br />
 
-      <label class="new_label">Age:</label>
-      <input
-        type="number"
-        name="patient_age"
-        placeholder="Enter age"
-        required
-      /><br />
+      <label class="new_label" for="pAge">Age:</label>
+      <input type="number" name="patient_age" placeholder="Enter age" id="pAge" required /><br />
 
-      <label class="new_label">Gender:</label>
-      <select name="patient_gender" required>
+      <label class="new_label" for="pGender">Gender:</label>
+      <select name="patient_gender" id="pGender" required>
         <option value="">--Select--</option>
         <option value="Male">♂ Male</option>
         <option value="Female">♀ Female</option>
-        <option value="Other">⚧ Other</option></select
-      ><br />
-      <label for="symptoms" class="new_label">Select Symptoms</label>
-      <div
-        style="
+        <option value="Other">⚧ Other</option>
+      </select><br />
+      <label for="symptoms" class="new_label" >Select Symptoms</label>
+      <div style="
           max-height: 300px;
           overflow-y: scroll;
           border: 1px solid #ccc;
           padding: 10px;
           background: white;
           color: black;
-        "
-      >
+        ">
         {% for symptom in symptoms_list %}
         <div>
-          <input
-            type="checkbox"
-            name="symptoms"
-            value="{{ symptom }}"
-            id="{{ symptom }}"
-          />
+          <input type="checkbox" name="symptoms" value="{{ symptom }}" id="{{ symptom }}" />
           <label for="{{ symptom }}">{{ symptom }}</label>
         </div>
         {% endfor %}
@@ -71,8 +108,8 @@ extra_css %}
 
 {% if predicted_disease %}
 
-<!-- ==========button================ -->
-<h1 class="text-center mt-4 my-4">Our Predicted Result</h1>
+
+<!-- <h1 class="text-center mt-4 my-4">Our Predicted Result</h1> -->
 
 {% endif %} {% if predicted_disease %}
 <!-- In Table -->
@@ -181,18 +218,21 @@ extra_css %}
   <!-- <a href="#" class="print-btn" onclick="window.print()">🖨 Print Report</a> -->
   <!-- <button type="button" id="printBtn">🖨️ Print Report</button> -->
 
-  <button type="button" id="printBtn">🖨️ Print Report</button>
+  <!-- <button type="button" id="printBtn">🖨️ Print Report</button> -->
+
+
+
 
   <div class="footer">
     This is a computer-generated report and does not require a signature.<br />
     © 2025 AI Disease Prediction System
   </div>
 </div>
-<script>
-  
-</script>
+<button type="button" id="pdfBtn">🖨️ Download PDF</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/predict.js') }}"></script>
 
 {% endif %} {% endblock %} {% block extra_js %}
 
-<script src="{{ url_for('static', filename='js/predict.js') }}"></script>
 {% endblock %}
