@@ -72,17 +72,26 @@ extra_css %}
 
 
 
-
 <div class="chat-wrapper">
-  <div class="chat-header">🩺 AI Doctor Chatbot</div>
+  <div class="chat-header">
+    🩺 AI Doctor Chatbot
+    <a href="{{ url_for('clear_chat') }}" class="btn btn-danger" style="float:right; font-size:14px; padding:2px 6px;">Clear Chat</a>
+  </div>
 
-  <div id="chat-box" class="chat-box"></div>
+  <div id="chat-box" class="chat-box">
+    {% for c in history %}
+      <div class="message {{ 'user-message' if c.sender=='user' else 'bot-message' }}">
+        {{ c.message }}
+      </div>
+    {% endfor %}
+  </div>
 
   <div class="chat-input">
     <input id="user-input" type="text" placeholder="Type your message..." />
     <button id="send-btn">➤</button>
   </div>
 </div>
+
 
 
 

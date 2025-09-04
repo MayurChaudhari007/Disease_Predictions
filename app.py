@@ -354,8 +354,8 @@ app.secret_key = "your_secret_key"
 # ---------------------------
 # SQLAlchemy Config
 # ---------------------------
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -395,6 +395,13 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+# Chat model
+class Chat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(400))
+    sender = db.Column(db.String(400))  # user / bot
+    message = db.Column(db.Text)
 
 
 class MedicalReport(db.Model):
@@ -687,21 +694,49 @@ def ai_predict():
 ##########################################################################################
 ######################     Chat Bot       #######################################
 
+
+#  Chatbot page
 @app.route("/chatbot")
 def chatbot_page():
-    user = User.query.filter_by(username=session["username"]).first()
-    return render_template("chatbot.html", username=user.username)
+    if "username" not in session:
+        return redirect(url_for("login"))  
 
+    user = session["username"]
+    history = Chat.query.filter_by(username=user).all()
+    return render_template("chatbot.html", username=user, history=history)
 
+# Get response route
 @app.route("/get_response", methods=["POST"])
 def get_response():
-    user_message = request.json.get("message", "")
-    if not user_message.strip():
-        return jsonify({"reply": "Please type something."})
+    if "username" not in session:
+        return jsonify({"reply": "⚠️ Please login first."})
 
-    res = chat.send_message(user_message)
-    bot_reply = res.text.strip()
+    data = request.get_json()
+    user_message = data.get("message")
+
+    # Save user message
+    chat_entry = Chat(username=session["username"], sender="user", message=user_message)
+    db.session.add(chat_entry)
+    db.session.commit()
+
+    # Generate bot reply
+    response = chat.send_message(user_message)
+    bot_reply = response.text  
+
+    # Save bot reply
+    bot_entry = Chat(username=session["username"], sender="bot", message=bot_reply)
+    db.session.add(bot_entry)
+    db.session.commit()
+
     return jsonify({"reply": bot_reply})
+
+# Clear chat
+@app.route("/clear_chat")
+def clear_chat():
+    if "username" in session:
+        Chat.query.filter_by(username=session["username"]).delete()
+        db.session.commit()
+    return redirect(url_for("chatbot_page"))
 
 
 
