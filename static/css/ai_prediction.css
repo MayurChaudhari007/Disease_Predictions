@@ -119,9 +119,6 @@ ul {
   margin-bottom: 8px;
 }
 
-
-
-
 /* How It Works Section */
 .ai-steps {
   background: #ffffff;
@@ -185,8 +182,6 @@ ul {
   transform: scale(1.02);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
-
 
 /* === Disclaimer === */
 .ai-disclaimer {
@@ -253,5 +248,110 @@ ul {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* =========================
+   MOBILE RESPONSIVE FIXES
+   ========================= */
+@media screen and (max-width: 768px) {
+  /* AI Intro */
+  .ai-intro {
+    padding: 20px;
+    margin: 20px 10px;
+  }
+  .ai-intro h1 {
+    font-size: 1.6em;
+  }
+  .ai-intro .tagline {
+    font-size: 1em;
+  }
+
+  /* Features grid -> stacked */
+  .ai-features {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .feature-card {
+    padding: 15px;
+    font-size: 0.95em;
+  }
+
+  /* Steps */
+  .ai-steps {
+    padding: 20px;
+    margin: 20px 10px;
+  }
+  .ai-steps h2 {
+    font-size: 1.4em;
+  }
+  .ai-steps ol li {
+    padding: 15px 15px 15px 50px;
+    font-size: 0.95em;
+  }
+  .ai-steps ol li strong {
+    font-size: 1em;
+  }
+
+  /* AI Tips */
+  .ai-tips {
+    padding: 15px;
+    margin: 20px 10px;
+  }
+  .ai-tips h2 {
+    font-size: 1.4em;
+  }
+  .ai-tips li {
+    font-size: 0.95em;
+    padding: 10px 12px;
+  }
+
+  /* Disclaimer */
+  .ai-disclaimer {
+    font-size: 0.85em;
+    padding: 10px;
+  }
+
+  /* Form */
+  form.card {
+    padding: 15px !important;
+    margin: 15px auto !important;
+    width: 100% !important;
+  }
+  form.card label {
+    font-size: 0.95em;
+  }
+  form.card input,
+  form.card select,
+  form.card textarea {
+    font-size: 14px;
+  }
+  #predictBtn {
+    width: 100%;
+    font-size: 15px;
+  }
+
+  /* Report */
+  .medical-report {
+    padding: 15px;
+    margin: 20px 10px;
+    overflow-x: auto; /* scroll if content too wide */
+  }
+  .medical-report h2 {
+    font-size: 1.4em;
+  }
+  .report-section h4 {
+    font-size: 1.1em;
+  }
+  .medical-report p,
+  .medical-report li {
+    font-size: 0.95em;
+  }
+
+  /* Buttons */
+  #downloadPDF {
+    width: 100%;
+    max-width: 250px;
+    font-size: 15px;
   }
 }

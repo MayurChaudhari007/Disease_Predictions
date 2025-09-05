@@ -12,23 +12,21 @@
 
 
 <!-- Centered card -->
-<div class="d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg p-4 rounded-4" style="max-width: 450px; width: 100%;">
+<div class="d-flex justify-content-center align-items-center vh-100 px-3">
+  <div class="card shadow-lg auth-card bg-white" style="max-width: 450px;">
     <div class="text-center mb-4">
-      <img src="https://cdn-icons-png.flaticon.com/512/2966/2966485.png" alt="logo" class="mb-3"
+      <img src="https://cdn-icons-png.flaticon.com/512/2966/2966485.png" alt="logo" class="mb-3 img-fluid"
         style="max-height: 70px;" />
       <h2 class="fw-bold text-success">Create Account</h2>
-      <p class="text-muted">Join us today, it’s quick and easy!</p>
+      <p class="text-muted small">Join us today, it’s quick and easy!</p>
     </div>
 
-    <!-- Registration Form -->
     <form method="post" action="{{ url_for('register') }}">
       <div class="mb-3">
         <label class="form-label fw-semibold">Username</label>
         <input type="text" name="username" class="form-control rounded-pill" placeholder="Choose a username" required>
       </div>
 
-      <!-- Password field with toggle -->
       <div class="mb-3">
         <label class="form-label fw-semibold">Password</label>
         <div class="input-group">
@@ -40,7 +38,6 @@
         </div>
       </div>
 
-      <!-- Confirm Password field with toggle -->
       <div class="mb-3">
         <label class="form-label fw-semibold">Confirm Password</label>
         <div class="input-group">
@@ -69,6 +66,8 @@
     {% endif %}
   </div>
 </div>
+
+
 
 <!-- JS for password toggle -->
 <script>

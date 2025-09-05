@@ -251,3 +251,98 @@
   box-shadow: 0 6px 15px rgba(0, 114, 255, 0.25);
 }
 
+
+
+/* =========================
+   MOBILE RESPONSIVE FIXES
+   ========================= */
+@media screen and (max-width: 768px) {
+
+  /* Chatbot Hero */
+  .chatbot-hero {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  .chatbot-hero h1 {
+    font-size: 1.5rem;
+  }
+  .chatbot-hero p {
+    font-size: 0.95rem;
+  }
+
+  /* Features */
+  .chatbot-features {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .chatbot-card {
+    padding: 15px;
+    font-size: 0.95em;
+  }
+
+  /* Steps */
+  .step-list {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .step {
+    padding: 12px;
+    font-size: 0.95em;
+  }
+
+  /* Tips */
+  .chatbot-tips {
+    padding: 10px;
+  }
+  .chatbot-tips h2 {
+    font-size: 1.4em;
+  }
+  .chatbot-tips li {
+    font-size: 0.95em;
+    padding: 10px 12px;
+  }
+
+  /* Disclaimer */
+  .chatbot-disclaimer {
+    font-size: 0.85em;
+    padding: 10px;
+  }
+
+  /* Chat Wrapper */
+  .chat-wrapper {
+    max-width: 100%;
+    margin: 0;
+    height: 85vh;
+    border-radius: 0;
+  }
+
+  .chat-header {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .chat-box {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .message {
+    max-width: 90%;
+    font-size: 0.95em;
+    padding: 8px 12px;
+  }
+
+  .chat-input {
+    padding: 8px;
+  }
+
+  .chat-input input {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .chat-input button {
+    font-size: 16px;
+    padding: 0 12px;
+  }
+}

@@ -1,30 +1,49 @@
-from flask import Flask, request, redirect, render_template, url_for, jsonify ,send_from_directory, flash, abort,session
+from flask import (
+    Flask,
+    request,
+    redirect,
+    render_template,
+    url_for,
+    jsonify,
+    send_from_directory,
+    flash,
+    abort,
+    session,
+)
+
+import concurrent.futures
+import logging
 import numpy as np
 import pandas as pd
 import pickle
 from datetime import datetime
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename 
+from werkzeug.utils import secure_filename
+from werkzeug.exceptions import RequestEntityTooLarge
 
 # import flask_sqlalchemy
 from flask_sqlalchemy import SQLAlchemy
-# 
+
+#
 # from google import genai as ge
 # import math
 import ast
+
 # import openai
 import google.generativeai as genai
+
 # import requests
 import json
 
 from uuid import uuid4
 import os
-import re 
+import re
 import importlib
 
 # Load google-genai's genai
 from dotenv import load_dotenv
+
 ge = importlib.import_module("google.genai")
 
 # Import the library
@@ -34,8 +53,6 @@ load_dotenv()
 
 
 ############### Api Key ###################
-
-
 
 
 ################ DATAsets ################
@@ -289,7 +306,7 @@ def get_predicted_value(patient_symptoms):
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Configure the model
+# Configure the Ai prediction functions
 model = genai.GenerativeModel(
     model_name="gemini-2.0-flash-lite",
     system_instruction="""
@@ -315,9 +332,6 @@ Rules:
 )
 
 
-
-
-
 # ############ Chat Bot Functions #########################
 
 client = ge.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -339,9 +353,9 @@ chat = client.chats.create(
                         "Be polite, helpful, and concise."
                     )
                 }
-            ]
+            ],
         }
-    ]
+    ],
 )
 
 ########################################################
@@ -366,13 +380,22 @@ db = SQLAlchemy(app)
 # ---------------------------
 # Files will be stored in: <your project> / instance / uploads / <user_id> / <file>
 app.config["UPLOAD_FOLDER"] = os.path.join(app.instance_path, "uploads")
-app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16 MB max per file
+app.config["MAX_CONTENT_LENGTH"] = 2 * 1024 * 1024  # 2 MB max per file
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "doc", "docx"}
 
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
+
 def allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.errorhandler(RequestEntityTooLarge)
+def handle_file_too_large(e):
+    # flash("❌ File too large! Maximum allowed size is 2 MB.")
+    flash("File too large! Maximum allowed size is 2 MB.", "danger")
+    return redirect(url_for("dashboard"))
+
 
 # ---------------------------
 # Database Models
@@ -384,10 +407,7 @@ class User(db.Model):
 
     # link to reports
     reports = db.relationship(
-        "MedicalReport",
-        backref="user",
-        lazy=True,
-        cascade="all, delete-orphan"
+        "MedicalReport", backref="user", lazy=True, cascade="all, delete-orphan"
     )
 
     def set_password(self, password):
@@ -395,6 +415,7 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
 
 # Chat model
 class Chat(db.Model):
@@ -406,14 +427,18 @@ class Chat(db.Model):
 
 class MedicalReport(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    original_name = db.Column(db.String(260), nullable=False)   # what user uploaded
-    stored_name = db.Column(db.String(260), nullable=False)     # unique filename on disk
+    original_name = db.Column(db.String(260), nullable=False)  # what user uploaded
+    stored_name = db.Column(db.String(260), nullable=False)  # unique filename on disk
     mimetype = db.Column(db.String(100))
     size = db.Column(db.Integer)
     uploaded_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+
 with app.app_context():
-        db.create_all()
+    db.create_all()
+
+
 # ---------------------------
 # Jinja Filters
 # ---------------------------
@@ -429,8 +454,8 @@ def filesize(num):
         num /= 1024.0
     return f"{num:.1f} PB"
 
-########################################################
 
+########################################################
 
 
 @app.route("/")
@@ -438,6 +463,7 @@ def home1():
     # if "username" in session:
     #     return redirect(url_for("home"))
     return render_template("index.html")
+
 
 # Login (POST from index.html)
 @app.route("/login", methods=["POST"])
@@ -451,6 +477,7 @@ def login():
         return redirect(url_for("home"))
     else:
         return render_template("index.html", error="Invalid username or password.")
+
 
 # Register (GET shows form page, POST handles submission)
 @app.route("/register", methods=["GET", "POST"])
@@ -476,6 +503,7 @@ def register():
 
     return render_template("register.html")
 
+
 # Dashboard (upload + list files)
 @app.route("/dashboard")
 def dashboard():
@@ -489,8 +517,7 @@ def dashboard():
         return redirect(url_for("home1"))
 
     reports = (
-        MedicalReport.query
-        .filter_by(user_id=user.id)
+        MedicalReport.query.filter_by(user_id=user.id)
         .order_by(MedicalReport.uploaded_at.desc())
         .all()
     )
@@ -509,11 +536,15 @@ def upload():
 
     file = request.files["report"]
     if file.filename == "":
-        flash("No file was selected.")
+        # flash("No file was selected.")
+        flash("No file was selected.", "warning")
         return redirect(url_for("dashboard"))
 
     if not allowed_file(file.filename):
-        flash("File type not allowed. Allowed: pdf, png, jpg, jpeg, doc, docx")
+        # flash("File type not allowed. Allowed: pdf, png, jpg, jpeg, doc, docx")
+        flash(
+            "File type not allowed. Allowed: pdf, png, jpg, jpeg, doc, docx", "danger"
+        )
         return redirect(url_for("dashboard"))
 
     # Save the file
@@ -533,15 +564,19 @@ def upload():
         stored_name=stored_name,
         mimetype=file.mimetype,
         size=size,
-        user_id=user.id
+        user_id=user.id,
     )
     db.session.add(report)
     db.session.commit()
 
-    flash("Report uploaded successfully!")
+    # flash("Report uploaded successfully!")
+    flash("Report uploaded successfully!", "success")
     return redirect(url_for("dashboard"))
 
+
 # Download handler (only owner can download)
+
+
 @app.route("/files/<int:report_id>")
 def download(report_id):
     if "username" not in session:
@@ -550,17 +585,29 @@ def download(report_id):
     user = User.query.filter_by(username=session["username"]).first()
     report = MedicalReport.query.get_or_404(report_id)
 
+    # ✅ Ownership check
     if report.user_id != user.id:
         abort(403)
 
     user_folder = os.path.join(app.config["UPLOAD_FOLDER"], str(user.id))
+    file_path = os.path.join(user_folder, report.stored_name)
+
+    # ❌ If file missing on disk → delete DB entry
+    if not os.path.exists(file_path):
+        db.session.delete(report)
+        db.session.commit()
+        flash("⚠️ File not found on server. Record removed from database.", "warning")
+        return redirect(url_for("dashboard"))
+
+    # ✅ Otherwise download file
     return send_from_directory(
         user_folder,
         report.stored_name,
         as_attachment=True,
         download_name=report.original_name,
-        mimetype=report.mimetype
+        mimetype=report.mimetype,
     )
+
 
 # Delete handler (POST) — only owner can delete
 @app.route("/files/<int:report_id>/delete", methods=["POST"])
@@ -585,15 +632,15 @@ def delete_file(report_id):
 
     db.session.delete(report)
     db.session.commit()
-    flash("Report deleted.")
+    flash("Report deleted successfully!", "success")
+    # flash("Report deleted.")
     return redirect(url_for("dashboard"))
+
 
 @app.route("/logout")
 def logout():
     session.pop("username", None)
     return redirect(url_for("home1"))
-
-
 
 
 #####################    Home      #######################################
@@ -646,51 +693,174 @@ def form():
             dis_wrk=wrkout,
             symptoms_list=list(symptoms_dict.keys()),
         )
-    return render_template("predict.html", username=user.username, symptoms_list=list(symptoms_dict.keys()))
+    return render_template(
+        "predict.html", username=user.username, symptoms_list=list(symptoms_dict.keys())
+    )
 
 
 ########################################################################################
 ######################     AI   Prediction       #######################################
 
+"""
+# @app.route("/ai_predict", methods=["GET", "POST"])
+# def ai_predict():
+#     user = User.query.filter_by(username=session["username"]).first()
+#     if request.method == "POST":
+#         name = request.form.get("name")
+#         age = request.form.get("age")
+#         gender = request.form.get("gender")
+#         symptoms = request.form.get("symptoms")
+
+#         user_prompt = (
+#             f"Name: {name}, Age: {age}, Gender: {gender}, Symptoms: {symptoms}"
+#         )
+
+#         # Get AI response
+#         response = model.generate_content(user_prompt)
+
+#         prediction = response.text
+#         ######################
+#         cleaned_text = re.sub(r"^```json|```$", "", prediction.strip())
+#         cleaned_text = cleaned_text.strip("`").strip()
+
+#         # 2. Try to parse into Python dict
+#         try:
+#             prediction_data = json.loads(cleaned_text)
+#         except json.JSONDecodeError:
+#             prediction_data = {"raw_text": cleaned_text}
+
+#         result = prediction_data
+#         report_time = datetime.now().strftime("%d-%m-%Y %H:%M")
+#         ##################################
+        
+#         return render_template(
+#             "ai_predict.html",
+#             username=user.username,
+#             result=result,
+#             report_time=report_time,
+#         )
+
+#     return render_template("ai_predict.html", username=user.username, prediction=None)
+"""
 
 
-
-@app.route('/ai_predict', methods=['GET', 'POST'])
+@app.route("/ai_predict", methods=["GET", "POST"])
 def ai_predict():
     user = User.query.filter_by(username=session["username"]).first()
-    if request.method == 'POST':
-        name = request.form.get('name')
-        age = request.form.get('age')
-        gender = request.form.get('gender')
-        symptoms = request.form.get('symptoms')
 
-        user_prompt = f"Name: {name}, Age: {age}, Gender: {gender}, Symptoms: {symptoms}"
+    if request.method == "POST":
+        name = request.form.get("name")
+        age = request.form.get("age")
+        gender = request.form.get("gender")
+        symptoms = request.form.get("symptoms")
 
-        # Get AI response
-        response = model.generate_content(user_prompt)
+        user_prompt = (
+            f"Name: {name}, Age: {age}, Gender: {gender}, Symptoms: {symptoms}"
+        )
 
-        
-        
-        prediction = response.text
-        ######################
-        cleaned_text = re.sub(r"^```json|```$", "", prediction.strip())
-        cleaned_text = cleaned_text.strip("`").strip()
-        
-        # 2. Try to parse into Python dict
         try:
-            prediction_data = json.loads(cleaned_text)
-        except json.JSONDecodeError:
-            prediction_data = {"raw_text": cleaned_text}
+            # ✅ Run Gemini API with timeout
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(model.generate_content, user_prompt)
+                response = future.result(timeout=10)  # ⏱ 10 sec timeout
 
-        result = prediction_data
+            prediction = response.text if response else None
+
+            if not prediction:
+                raise ValueError("No response from AI")
+
+            # Clean and parse response
+            cleaned_text = re.sub(r"^```json|```$", "", prediction.strip())
+            cleaned_text = cleaned_text.strip("`").strip()
+
+            try:
+                prediction_data = json.loads(cleaned_text)
+            except json.JSONDecodeError:
+                prediction_data = {"raw_text": cleaned_text}
+
+            result = prediction_data
+
+        except concurrent.futures.TimeoutError:
+            app.logger.error("AI Prediction timeout")
+            flash("⚠️ AI service timed out. Please try again later.")
+            return redirect(url_for("ai_predict"))
+
+        except Exception as e:
+            app.logger.error(f"AI Prediction error: {e}")
+            flash("⚠️ AI service is unavailable. Please try again later.")
+            return redirect(url_for("ai_predict"))
+
         report_time = datetime.now().strftime("%d-%m-%Y %H:%M")
-        ##################################
-        # return render_template("ai_predict.html", prediction=prediction)
-        return render_template("ai_predict.html", username=user.username, result=result,report_time=report_time)
+
+        return render_template(
+            "ai_predict.html",
+            username=user.username,
+            result=result,
+            report_time=report_time,
+        )
 
     return render_template("ai_predict.html", username=user.username, prediction=None)
 
 
+"""
+# @app.route("/ai_predict", methods=["GET", "POST"])
+# def ai_predict():
+#     if "username" not in session:
+#         return redirect(url_for("home1"))
+
+#     user = User.query.filter_by(username=session["username"]).first()
+
+#     if request.method == "POST":
+#         name = request.form.get("name")
+#         age = request.form.get("age")
+#         gender = request.form.get("gender")
+#         symptoms = request.form.get("symptoms")
+
+#         user_prompt = f"Name: {name}, Age: {age}, Gender: {gender}, Symptoms: {symptoms}"
+
+#         try:
+#             # ✅ Run Gemini API with timeout
+#             with concurrent.futures.ThreadPoolExecutor() as executor:
+#                 future = executor.submit(model.generate_content, user_prompt)
+#                 response = future.result(timeout=12)  # ⏱ 12 sec timeout
+
+#             prediction = response.text if response else None
+
+#             if not prediction:
+#                 raise ValueError("Empty response from AI")
+
+#             # ✅ Clean and parse response
+#             cleaned_text = re.sub(r"^```json|```$", "", prediction.strip())
+#             cleaned_text = cleaned_text.strip("`").strip()
+
+#             try:
+#                 prediction_data = json.loads(cleaned_text)
+#             except json.JSONDecodeError:
+#                 prediction_data = {"raw_text": cleaned_text}
+
+#             result = prediction_data
+
+#         except concurrent.futures.TimeoutError:
+#             app.logger.error("AI Prediction timeout")
+#             flash("⚠️ AI service timed out. Please try again later.", "danger")
+#             return redirect(url_for("ai_predict"))
+
+#         except Exception as e:
+#             logging.exception("AI Prediction error")
+#             flash("⚠️ AI service is unavailable. Please try again later.", "danger")
+#             return redirect(url_for("ai_predict"))
+
+#         report_time = datetime.now().strftime("%d-%m-%Y %H:%M")
+
+#         return render_template(
+#             "ai_predict.html",
+#             username=user.username,
+#             result=result,
+#             report_time=report_time,
+#         )
+
+#     return render_template("ai_predict.html", username=user.username, prediction=None)
+"""
 ##########################################################################################
 ######################     Chat Bot       #######################################
 
@@ -699,11 +869,12 @@ def ai_predict():
 @app.route("/chatbot")
 def chatbot_page():
     if "username" not in session:
-        return redirect(url_for("login"))  
+        return redirect(url_for("login"))
 
     user = session["username"]
     history = Chat.query.filter_by(username=user).all()
     return render_template("chatbot.html", username=user, history=history)
+
 
 # Get response route
 @app.route("/get_response", methods=["POST"])
@@ -721,7 +892,7 @@ def get_response():
 
     # Generate bot reply
     response = chat.send_message(user_message)
-    bot_reply = response.text  
+    bot_reply = response.text
 
     # Save bot reply
     bot_entry = Chat(username=session["username"], sender="bot", message=bot_reply)
@@ -730,6 +901,7 @@ def get_response():
 
     return jsonify({"reply": bot_reply})
 
+
 # Clear chat
 @app.route("/clear_chat")
 def clear_chat():
@@ -737,12 +909,6 @@ def clear_chat():
         Chat.query.filter_by(username=session["username"]).delete()
         db.session.commit()
     return redirect(url_for("chatbot_page"))
-
-
-
-
-
-
 
 
 ##########################################################################################
@@ -767,5 +933,5 @@ def contact():
 
 ##########################################################################################
 if __name__ == "__main__":
-    
+
     app.run(debug=True)

@@ -79,7 +79,8 @@ extra_css %}
   <!-- <h2 class="text-primary mb-4 text-center">AI Disease Prediction</h2> -->
 
   <!-- Prediction Form -->
-  <form method="POST" class="card p-4 shadow" style="max-width:900px; margin:0 auto;">
+
+  <form method="POST" class="card p-4 shadow" id="myForm" style="max-width:900px; margin:0 auto;">
     <div class="mb-3">
       <label class="form-label" for="pName">Patient Name:</label>
       <input type="text" name="name" class="form-control" placeholder="Enter your full name" id="pName" required />
@@ -106,8 +107,17 @@ extra_css %}
         id="pSymptoms" required></textarea>
     </div>
 
-    <button type="submit" class="btn btn-primary">Predict</button>
+    <button type="submit" class="btn btn-primary" id="predictBtn">Predict</button>
+    <div id="loading" class="text-primary mt-2" style="display:none;">⏳ Analyzing symptoms...</div>
+    <div id="errorBox" class="text-danger"></div>
+    <div id="resultBox"></div>
+
+
+
   </form>
+  <!-- Where report will appear -->
+  <div id="resultBox" class="mt-4"></div>
+
 
 
 
@@ -121,7 +131,7 @@ extra_css %}
     </div>
 
     <div class="report-section">
-      <p><strong>Patient Name:</strong> {{ result.patient_name }}</p>
+      <p><strong>Patient Name:</strong><span id="pename">{{ result.patient_name }}</span> </p>
       <p><strong>Predicted Disease:</strong> {{ result.predicted_disease }}</p>
     </div>
 

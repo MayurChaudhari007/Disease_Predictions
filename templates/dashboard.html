@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %} Report Storage {% endblock %}
-{% block extra_css %} 
+{% block extra_css %}
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/storage.css') }}">
 {%endblock %}
@@ -32,13 +32,17 @@
 </div>
 
 <div class="container py-4">
-  {% with messages = get_flashed_messages() %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-  <div class="alert alert-info rounded-4">
-    {{ messages|join(' • ') }}
+  {% for category, msg in messages %}
+  <div class="alert alert-{{ category }} alert-dismissible fade show rounded-4" role="alert">
+    {{ msg }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
+  {% endfor %}
   {% endif %}
   {% endwith %}
+
 
   <div class="row g-4">
     <!-- Upload Card -->
@@ -46,15 +50,20 @@
       <div class="card shadow-sm rounded-4 h-100">
         <div class="card-body">
           <h5 class="card-title fw-bold">Upload Medical Report</h5>
-          <p class="text-muted small mb-3">Accepted: PDF, JPG, PNG, DOC, DOCX (max 16 MB)</p>
+          <p class="text-muted small mb-3">
+            Accepted: PDF, JPG, PNG, DOC, DOCX (max 2 MB)
+          </p>
 
-          <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+          <form action="{{ url_for('upload') }}" method="post" id="uploadForm" enctype="multipart/form-data">
             <div class="mb-3">
-              <input class="form-control rounded-pill" type="file" name="report"
-                accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" required>
+              <input class="form-control rounded-pill" type="file" name="report" id="reportInput"
+                accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" >
             </div>
             <button class="btn btn-primary w-100 rounded-pill" type="submit">Upload</button>
           </form>
+
+          <!-- Error Message -->
+          <div id="uploadError" class="text-danger small mt-2"></div>
         </div>
       </div>
     </div>
@@ -113,4 +122,9 @@
     </div>
   </div>
 </div>
+
+<script src="{{ url_for('static', filename='js/storage.js') }}"></script>
+
+
+
 {% endblock content %}

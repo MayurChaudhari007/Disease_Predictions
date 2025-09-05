@@ -10,17 +10,6 @@
     position: relative;
     font-family: 'Poppins', sans-serif;
   }
-
-  /* Floating Medical Icons */
-  
-
-  /* Floating Bubbles */
-  
-
- 
-
-  /* Medical Motivation Text */
-  
 </style>
 
 
@@ -29,22 +18,21 @@
 
 
 <!-- Login Card -->
-<div class="d-flex justify-content-center align-items-center vh-100">
-  <div class="card shadow-lg p-4 rounded-4" style="max-width: 420px; width: 100%;">
+<div class="d-flex justify-content-center align-items-center vh-100 px-3">
+  <div class="card shadow-lg auth-card bg-white">
     <div class="text-center mb-4">
-      <img src="https://img.icons8.com/color/96/000000/heart-with-pulse.png" alt="logo" class="mb-3" />
+      <img src="https://img.icons8.com/color/96/000000/heart-with-pulse.png" alt="logo"
+        class="mb-3 img-fluid animate__pulse" style="max-height: 80px;" />
       <h2 class="fw-bold text-primary">AI Disease Prediction</h2>
-      <p class="text-muted">Login to explore smart health insights</p>
+      <p class="text-muted small">Login to explore smart health insights</p>
     </div>
 
-    <!-- Login Form -->
     <form method="post" action="{{ url_for('login') }}">
       <div class="mb-3">
         <label class="form-label fw-semibold">Username</label>
         <input type="text" name="username" class="form-control rounded-pill" placeholder="Enter username" required>
       </div>
 
-      <!-- Password with toggle -->
       <div class="mb-3">
         <label class="form-label fw-semibold">Password</label>
         <div class="input-group">
@@ -76,11 +64,13 @@
   </div>
 </div>
 
+
+
 <!-- JS for password toggle -->
 
 <script>
   // Array of rotating health quotes
-  
+
 </script>
 
 <script>
