@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "image/png",
       "image/jpeg",
       "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
 
     if (!allowedTypes.includes(file.type)) {
@@ -47,3 +47,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
+
+
+// / / / / /                  auto scroll                     / / / / / / 
+document.addEventListener("DOMContentLoaded", function () {
+  const storage = document.getElementById("storage_container");
+
+  if (storage) {
+    let scrolled = false;
+
+    try {
+      storage.scrollIntoView({ behavior: "smooth" });
+      scrolled = true;
+    } catch (e) {
+      scrolled = false;
+    }
+  }
+});
+
+

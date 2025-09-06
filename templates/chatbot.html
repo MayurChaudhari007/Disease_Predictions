@@ -3,6 +3,7 @@ extra_css %}
 <link rel="stylesheet" href="../static/css/chatbot.css" />
 {%endblock %} {% block content%}
 <div class="chatbot-container">
+
   <!-- Hero Section -->
   <div class="chatbot-hero">
     <h1>💬 Gemini-Powered Health Chatbot</h1>
@@ -67,22 +68,35 @@ extra_css %}
     ⚠ <strong>Disclaimer:</strong> This chatbot is for informational purposes
     only. Always consult a doctor for medical advice.
   </div>
+
 </div>
 
 
-
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, msg in messages %}
+<div class="" id="storage_container" >
+  <!-- {{ msg }} -->
+  
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
 
 <div class="chat-wrapper">
   <div class="chat-header">
     🩺 AI Doctor Chatbot
-    <a href="{{ url_for('clear_chat') }}" class="btn btn-danger" style="float:right; font-size:14px; padding:2px 6px;">Clear Chat</a>
+    <a href="{{ url_for('clear_chat') }}?cleared=1" class="btn btn-danger"
+      style="float:right; font-size:14px; padding:2px 6px;">
+      Clear Chat
+    </a>
   </div>
 
   <div id="chat-box" class="chat-box">
     {% for c in history %}
-      <div class="message {{ 'user-message' if c.sender=='user' else 'bot-message' }}">
-        {{ c.message }}
-      </div>
+    <div class="message {{ 'user-message' if c.sender=='user' else 'bot-message' }}">
+      {{ c.message }}
+    </div>
     {% endfor %}
   </div>
 
@@ -91,6 +105,20 @@ extra_css %}
     <button id="send-btn">➤</button>
   </div>
 </div>
+<!-- Toast container -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
+  <div id="chatToast" class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="toastMessage"></div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+</script>
 
 
 

@@ -8,6 +8,18 @@ extra_css %}
 
 <link rel="stylesheet" href="../static/css/ai_prediction.css" />
 {%endblock %} {% block content %}
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+  <div id="report-toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
+    aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        ✅ Report generated! Scroll down to view.
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+        aria-label="Close"></button>
+    </div>
+  </div>
+</div>
 <!-- ===== AI Prediction Top Section ===== -->
 <div class="ai-intro">
   <h1>🤖 AI-Powered Disease Prediction</h1>

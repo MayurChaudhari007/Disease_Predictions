@@ -1,3 +1,35 @@
+//  For auto scroll
+
+document.addEventListener("DOMContentLoaded", function () {
+  const report = document.getElementById("report");
+
+  if (report) {
+    let scrolled = false;
+
+    try {
+      report.scrollIntoView({ behavior: "smooth" });
+      scrolled = true;
+    } catch (e) {
+      scrolled = false;
+    }
+
+    
+    // setTimeout(() => {
+    //   const nearReport = window.scrollY > report.offsetTop - window.innerHeight;
+    //   if (!nearReport) {
+    //     const toastEl = document.getElementById("report-toast");
+    //     const toast = new bootstrap.Toast(toastEl);
+    //     toast.show();
+    //   }
+    // }, 1000);
+    const toastEl = document.getElementById("report-toast");
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+  }
+});
+
+
+
 
 const patientNameElement = document.getElementById("pename");
 let patientName = patientNameElement ? patientNameElement.textContent.trim() : "Patient";

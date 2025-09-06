@@ -4,6 +4,26 @@ extra_css %}
   integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
 <link rel="stylesheet" href="../static/css/predict.css" />
 {%endblock %} {% block content%}
+<!-- {% if predicted_disease %}
+
+
+<h1 class="text-center mt-4 my-4">Scroll down to get report</h1>
+
+{% endif %} -->
+
+<!-- Toast Notification -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+  <div id="report-toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
+    aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        ✅ Report generated! Scroll down to view.
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+        aria-label="Close"></button>
+    </div>
+  </div>
+</div>
 
 <!-- ===== Hero Section ===== -->
 <div class="ml-container">
@@ -67,7 +87,7 @@ extra_css %}
 
 
 <div class="container ">
-  
+
 
   <form action="/predict" method="post">
     <div class="form-group shadow">
@@ -85,7 +105,7 @@ extra_css %}
         <option value="Female">♀ Female</option>
         <option value="Other">⚧ Other</option>
       </select><br />
-      <label for="symptoms" class="new_label" >Select Symptoms</label>
+      <label for="symptoms" class="new_label">Select Symptoms</label>
       <div style="
           max-height: 300px;
           overflow-y: scroll;
@@ -111,11 +131,6 @@ extra_css %}
 </div>
 
 {% if predicted_disease %}
-
-
-<!-- <h1 class="text-center mt-4 my-4">Our Predicted Result</h1> -->
-
-{% endif %} {% if predicted_disease %}
 <!-- In Table -->
 <div class="report-container" id="rep_con">
   <div id="new_repo">
@@ -233,6 +248,10 @@ extra_css %}
   </div>
 </div>
 <button type="button" id="pdfBtn">🖨️ Download PDF</button>
+<script>
+  
+</script>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <script src="{{ url_for('static', filename='js/predict.js') }}"></script>

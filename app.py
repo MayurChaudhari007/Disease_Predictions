@@ -908,6 +908,7 @@ def clear_chat():
     if "username" in session:
         Chat.query.filter_by(username=session["username"]).delete()
         db.session.commit()
+        flash("Chat is cleared. Scroll down to start fresh.", "success")
     return redirect(url_for("chatbot_page"))
 
 
